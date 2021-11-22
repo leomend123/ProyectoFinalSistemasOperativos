@@ -1,6 +1,7 @@
 //FIFO 
 //Benjamín Guillermo López Salinas A01383127
 //Eduardo Vara Casas A00825033
+//Leonardo Mendiola A01197075
 //Trabajando Sincrónicamente
 #include<bits/stdc++.h>
 #include<iostream>
