@@ -1,0 +1,124 @@
+//LRU 
+//Benjamín Guillermo López Salinas A01383127
+//Eduardo Vara Casas A00825033
+//Leonardo Mendiola A01197076
+//Trabajando Sincrónicamente
+#include<bits/stdc++.h>
+#include<iostream>
+#include<stdlib.h>
+#include <math.h>
+
+
+using namespace std;
+int main(){
+   
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int x = 0;
+
+    long double n = 5;//Numero de Marco de Pagina
+    long double pt = 30;//numero de procesos totales
+    vector<char> p(pt);//Vectores para los procesos
+    vector<char> hi(pt);
+
+    char strrnd[29];//Arreglo auxiliar para generar caracteres al azar
+    srand(time(NULL));
+    
+    for(int i=0; i <= 29; i++){
+        strrnd[i] = 65 + rand() % (65 - 74); //Genera numeros aleatorios en ASCII que se encuentran 
+        p[i]=strrnd[i];                      //entre la A - J
+    }
+    
+    vector<vector<char>> a(n);               //definición de vector para recibir chars
+
+    for(i=0;i<n;i++){                        //vector para paginas
+        a[i]=vector<char>(pt,-1);
+    }
+    map <char, char> mp;    //Utilizamos la libreria MAP estandar de c++  (Se utiliza como contenedor)
+    for(i=0;i<pt;i++){
+        vector<pair<char,char>> c;
+        for(auto q: mp){                     // reemplaza for( auto q =begin(mp); q != end(mp); ++q)
+            c.push_back({q.second,q.first}); //agrega al final
+        }
+        sort(c.begin(),c.end()); //Hacemos un sort para ordenar los datos 
+        bool banderaCorre=false; // Bandera para corridas
+
+        for(j=0;j<n;j++){ // For para asociar posiciones 
+            if(a[j][i]==p[i]){
+                x++;
+                hi[i]=1;
+                mp[p[i]]=1;
+                banderaCorre=true;
+                break;
+            }
+            if(a[j][i]==-1){ //Verifica posicion
+                for(k=i;k<pt;k++)
+                    a[j][k]=p[i];
+                mp[p[i]]++;
+                banderaCorre=true;
+                break;
+            }
+        }
+        if(j==n||banderaCorre==false){ //Verifica numero de páginas y bandera
+            for(j=0;j<n;j++){
+                if(a[j][i]==c[c.size()-1].second){
+                    mp.erase(a[j][i]);
+                    for(k=i;k<pt;k++)
+                        a[j][k]=p[i];
+                    mp[p[i]]++;
+                    break;
+                }
+            }
+        }
+        for(auto q:mp){ // Se acomoda dependiendo si la bandera no es falsa y la posicione de mapa no es -1
+            if(q.first!=p[i]){
+                mp[q.first]++;
+            }
+        }
+    }
+
+    cout<<"Procesos ";//Imprimimos todos los procesos aleatorios almacenados en el arreglo P
+    for(i=0; i<pt; i++){
+        cout<<p[i]<<" ";
+    }
+
+    cout<<endl;
+    cout<<"--------------------------------------------------------------------";
+    cout<<endl;
+    for(i=0; i<n; i++){//Ciclo para imprimir los Marcos de Pagina
+        cout<<"Pagina "<<i<<" ";
+        for(j=0;j<pt;j++){
+            if(a[i][j]==-1)
+                cout<<"  ";
+                else 
+            cout<<a[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+
+    cout<<"         ";//Espacio para que caiga dentro de columnas
+    for(i=0; i<pt; i++){// Imprimiendo x donde sucedan Fallos de Pagina 
+        if(hi[i]==0)
+        cout<<"x ";
+        else
+        cout<<hi[i]<<"  ";
+    }
+
+    cout<<endl;
+    cout<<"--------------------------------------------------------------------";
+    cout<<endl;
+    cout<<"Fallo de Pagina = "<<pt-x<<endl;//Calculamos los Fallos de Página
+    
+    long double r;
+   r = ((pt - (pt-x))/pt)*100;//ecuacion para calcular el rendimiento
+    cout<<"Rendimiento = "<<r<<"%"<<endl;
+    
+    return 0;
+}
+
+// -------------------------REFERENCIAS PARA CÓDIGO----------------------------
+
+//Para MAP: https://www.geeksforgeeks.org/map-associative-containers-the-c-standard-template-library-stl/
+
+//Para vectores: https://www.cplusplus.com/reference/vector/vector/push_back/
