@@ -1,0 +1,119 @@
+//FIFO 
+//Benjamín Guillermo López Salinas A01383127
+//Eduardo Vara Casas A00825033
+//Trabajando Sincrónicamente
+#include<bits/stdc++.h>
+#include<iostream>
+#include<stdlib.h>
+#include <math.h>
+
+
+using namespace std;
+int main(){
+   
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int x = 0;
+    long double n = 5;//Numero de Marco de Pagina
+    long double pt = 30;//numero de procesos totales
+    vector<char> p(pt);//Vectores para los procesos
+    vector<char> hi(pt);
+
+    char strrnd[29];//Arreglo auxiliar para generar caracteres al azar
+    srand(time(NULL));
+    for(int i=0; i <= 29; i++){
+        strrnd[i] = 65 + rand() % (65 - 74); //Genera numeros aleatorios en ASCII que se encuentran 
+        p[i]=strrnd[i];                      //entre la A - J
+    }
+    
+    vector<vector<char>> a(n);
+
+    for(i=0;i<n;i++){
+        a[i]=vector<char>(pt,-1);
+    }
+    
+    map <char, char> y;   //Arreglo asociativo auxiliar mp
+    for(i=0; i<pt; i++){
+        vector<pair<char,char>> c;//Arreglo asociativo C
+
+        for(auto q: y){
+            c.push_back({q.second,q.first});
+        }
+
+        sort(c.begin(),c.end());
+        bool procces=false;
+        
+        for(j=0; j<n; j++){
+            if(a[j][i]==p[i]){
+                x++;                                //
+                hi[i]=1;
+                y[p[i]]++;
+                procces=true;
+                break;
+            }
+            if(a[j][i]==-1){
+                for(k=i;k<pt;k++)
+                    a[j][k]=p[i];
+                y[p[i]]++;
+                procces=true;
+                break;
+            }
+        }
+        if(j==n||procces==false){
+            for(j=0; j<n; j++){
+                if(a[j][i]==c[c.size()-1].second){
+                    y.erase(a[j][i]);
+                    for(k=i;k<pt;k++)
+                        a[j][k]=p[i];
+                    y[p[i]]++;
+                    break;
+                }
+            }
+        }
+
+        for(auto q:y){
+            if(q.first!=p[i]){
+                y[q.first]++;
+            }
+        }
+    }
+
+    cout<<"Procesos ";//Imprimimos todos los procesos aleatorios almacenados en el arreglo P
+    for(i=0; i<pt; i++){
+        cout<<p[i]<<" ";
+    }
+
+    cout<<endl;
+    cout<<"--------------------------------------------------------------------";
+    cout<<endl;
+    for(i=0; i<n; i++){//Ciclo para imprimir los Marcos de Pagina
+        cout<<"Pagina "<<i<<" ";
+        for(j=0;j<pt;j++){
+            if(a[i][j]==-1)
+                cout<<"  ";
+                else 
+            cout<<a[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+
+    cout<<"         ";//Espacio para que caiga dentro de columnas
+    for(i=0; i<pt; i++){// Imprimiendo x donde sucedan Fallos de Pagina 
+        if(hi[i]==0)
+        cout<<"x ";
+        else
+        cout<<hi[i]<<"  ";
+    }
+
+    cout<<endl;
+    cout<<"--------------------------------------------------------------------";
+    cout<<endl;
+    cout<<"Fallo de Pagina = "<<pt-x<<endl;//Calculamos los Fallos de Página
+    
+    long double r;
+   r = ((pt - (pt-x))/pt)*100;//ecuacion para calcular el rendimiento
+    cout<<"Rendimiento = "<<r<<"%"<<endl;
+    
+    return 0;
+}
